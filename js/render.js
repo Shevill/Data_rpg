@@ -18,6 +18,7 @@ function render(){
   else if(screen==='track')app.innerHTML=renderTrack(activeTrack);
   else if(screen==='quest')app.innerHTML=renderQuest(activeQuest);
   else if(screen==='review')app.innerHTML=renderReview();
+  if(screen==='track'&&_monsterHit){const xp=_monsterHit;_monsterHit=0;setTimeout(()=>triggerAttack(xp),80);}
 }
 
 // ============================================================
@@ -34,12 +35,12 @@ function renderMain(){
 
   return`
 <div style="padding-top:8px">
-  <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase">🧙 Data RPG</div>
+  <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase">🥷 Data RPG</div>
 
   <!-- Hero card -->
   <div class="card card-purple" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <div style="font-size:44px;line-height:1">🧙</div>
+      <div style="font-size:44px;line-height:1">🥷</div>
       <div style="flex:1">
         <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">Data Mage</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -155,6 +156,8 @@ function renderTrack(trackId){
   <div class="xp-bar-wrap" style="margin-bottom:16px">
     <div class="progress-fill" style="height:100%;width:${pct}%;border-radius:8px;background:${track.color}"></div>
   </div>
+
+  ${renderMonsterPanel(trackId)}
 
   <div>
     ${qs.map((q,idx)=>{
@@ -369,7 +372,7 @@ function doStep(questId,stepIdx,xpAmount){
   const{gained,leveledUp}=State.completeStep(questId,stepIdx,xpAmount);
   showXP('+'+gained+' XP');
   const qp=State.getQP(questId);
-  if(qp.completed){setTimeout(()=>{confetti();render();},500);}
+  if(qp.completed){_monsterHit=gained;setTimeout(()=>{confetti();render();},500);}
   else setTimeout(render,500);
   if(leveledUp)setTimeout(()=>showLevelUp(State.level),1100);
 }

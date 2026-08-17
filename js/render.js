@@ -217,6 +217,8 @@ function renderQuest(questId){
     }).join('')}
   </div>
 
+  ${renderMonsterPanel(quest,qp)}
+
   ${quest.steps.map((step,i)=>{
     const isDone=qp.steps[i];
     const isActive=i===activeIdx&&!allDone;
@@ -368,6 +370,7 @@ function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
 function doStep(questId,stepIdx,xpAmount){
   const{gained,leveledUp}=State.completeStep(questId,stepIdx,xpAmount);
   showXP('+'+gained+' XP');
+  triggerAttack(gained);
   const qp=State.getQP(questId);
   if(qp.completed){setTimeout(()=>{confetti();render();},500);}
   else setTimeout(render,500);

@@ -42,7 +42,7 @@ FROM employees
 WHERE hire_date >= '2022-01-01'
 ORDER BY annual_salary DESC;` },
     { title:'Задача: 5 запросов', xp:20, type:'task',
-      description:'На таблице employees напиши запросы:\n1. Все сотрудники без менеджера (manager_id IS NULL)\n2. Сотрудники из Analytics или ML с зарплатой между 90000 и 140000\n3. Имена, начинающиеся на A или B (используй LIKE)\n4. Топ-3 самых высокооплачиваемых сотрудников\n5. Сотрудники, нанятые в 2022 году',
+      description:'На таблице employees напиши запросы:\n1. Все сотрудники без менеджера (manager_id IS NULL) → Alice|Carol|Frank\n2. Сотрудники из Analytics или ML с зарплатой между 90000 и 140000 → Alice|Bob|David\n3. Имена, начинающиеся на A или B (используй LIKE) → Alice|Bob\n4. Топ-3 самых высокооплачиваемых сотрудников → Carol|David\n5. Сотрудники, нанятые в 2022 году → Alice|David|Frank',
       code:null },
     { title:'Recall: основы SELECT', xp:10, type:'recall',
       description:'За 2 минуты:\n1. В каком порядке SQL выполняет FROM, WHERE, SELECT?\n2. Чем LIKE \'%text%\' отличается от = \'text\'?\n3. Что вернёт COALESCE(NULL, NULL, 42, 10)?\n4. Зачем нужны алиасы (AS)?',

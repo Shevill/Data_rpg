@@ -88,7 +88,7 @@ WHERE hire_date < '2023-01-01'
 GROUP BY department
 HAVING COUNT(*) >= 2;` },
     { title:'Задача: аналитика зарплат', xp:20, type:'task',
-      description:'На таблице employees:\n1. Средняя зарплата по каждому отделу, отсортированная по убыванию\n2. Отделы где суммарный фонд оплаты труда > 200000\n3. Сколько сотрудников нанято в каждый год\n4. Найди отдел с максимальным разрывом между max и min зарплатой\n5. Посчитай долю каждого отдела в общем фонде',
+      description:'На таблице employees:\n1. Средняя зарплата по каждому отделу, отсортированная по убыванию → ML|Product|Analytics\n2. Отделы где суммарный фонд оплаты труда > 200000 → Analytics|ML\n3. Сколько сотрудников нанято в каждый год → 2021|2022|2023\n4. Найди отдел с максимальным разрывом между max и min зарплатой → Analytics\n5. Посчитай долю каждого отдела в общем фонде → Analytics|ML|Product',
       code:null },
     { title:'Recall: GROUP BY и HAVING', xp:10, type:'recall',
       description:'За 2 минуты:\n1. В чём разница WHERE и HAVING?\n2. Что будет если написать SELECT name, AVG(salary) FROM employees GROUP BY department?\n3. COUNT(*) vs COUNT(col) — в чём разница?\n4. Порядок: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY — верно?',
@@ -135,7 +135,7 @@ SELECT
 FROM employees e
 LEFT JOIN employees m ON e.manager_id = m.id;` },
     { title:'Задача: сложные JOIN', xp:20, type:'task',
-      description:'1. Найди все отделы из departments, в которых НЕТ ни одного сотрудника (LEFT JOIN + WHERE IS NULL)\n2. Для каждого сотрудника покажи: имя, зарплату, бюджет отдела и долю зарплаты в бюджете\n3. SELF JOIN: найди все пары (сотрудник, коллега) из одного отдела\n4. Покажи сотрудников, чья зарплата выше средней по их отделу',
+      description:'1. Найди все отделы из departments, в которых НЕТ ни одного сотрудника (LEFT JOIN + WHERE IS NULL)\n2. Для каждого сотрудника покажи: имя, зарплату, бюджет отдела и долю зарплаты в бюджете → Alice|Bob|Carol|David|Eve|Frank\n3. SELF JOIN: найди все пары (сотрудник, коллега) из одного отдела → Alice|Bob|Carol|David|Eve\n4. Покажи сотрудников, чья зарплата выше средней по их отделу → Alice|Carol',
       code:null },
     { title:'Recall: JOIN типы', xp:10, type:'recall',
       description:'За 2 минуты:\n1. Что вернёт LEFT JOIN когда нет совпадения в правой таблице?\n2. В чём опасность JOIN на не-уникальный ключ?\n3. Как найти строки в левой таблице, которых нет в правой?\n4. Зачем нужен SELF JOIN — приведи пример из жизни?',
@@ -180,7 +180,7 @@ SELECT
 FROM employees
 ORDER BY hire_date;` },
     { title:'Задача: оконные задачи', xp:20, type:'task',
-      description:'1. Для каждого сотрудника: его зарплата, средняя по отделу, и процентиль NTILE(4)\n2. Найди топ-1 по зарплате в каждом отделе (используй RANK() в подзапросе/CTE)\n3. Создай таблицу monthly_sales(month, amount) с 12 месяцами. Посчитай:\n   - скользящее среднее за 3 месяца (ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)\n   - рост к прошлому месяцу в % через LAG()\n4. Перепиши запрос из п.2 через CTE (WITH clause)',
+      description:'1. Для каждого сотрудника: его зарплата, средняя по отделу, и процентиль NTILE(4) → Alice|Bob|Carol|David|Eve|Frank\n2. Найди топ-1 по зарплате в каждом отделе (используй RANK() в подзапросе/CTE) → Alice|Carol|Frank\n3. Создай таблицу monthly_sales(month, amount) с 12 месяцами. Посчитай:\n   - скользящее среднее за 3 месяца (ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)\n   - рост к прошлому месяцу в % через LAG()\n4. Перепиши запрос из п.2 через CTE (WITH clause) → Alice|Carol|Frank',
       code:null },
     { title:'Recall: оконные функции', xp:10, type:'recall',
       description:'За 2 минуты:\n1. В чём разница RANK() и DENSE_RANK()?\n2. Чем оконная функция отличается от GROUP BY?\n3. Что такое PARTITION BY?\n4. Как получить \'значение предыдущей строки\' в SQL?',
@@ -220,7 +220,7 @@ SELECT name FROM users WHERE name LIKE '_o%';
 SELECT name, salary, city
 FROM users
 WHERE salary > 85000 AND city != 'Paris';`}
- ,{title:'Задача: WHERE фильтры',xp:20,type:'task',description:`Таблицы: users(id,name,age,city,salary,dept_id,join_date), departments(id,name,budget)\n1. Все пользователи старше 30 из Лондона\n2. Пользователи с зарплатой от 80000 до 110000 (BETWEEN)\n3. Города London, Berlin или Paris (IN)\n4. Имена начинающиеся на A или C (два LIKE через OR)\n5. Топ-3 самых высокооплачиваемых (ORDER BY + LIMIT)`,code:null}
+ ,{title:'Задача: WHERE фильтры',xp:20,type:'task',description:`Таблицы: users(id,name,age,city,salary,dept_id,join_date), departments(id,name,budget)\n1. Все пользователи старше 30 из Лондона → Frank|Karen\n2. Пользователи с зарплатой от 80000 до 110000 (BETWEEN) → Eve|Frank|Grace|Henry|Iris|Jack|Karen\n3. Города London, Berlin или Paris (IN) → London|Berlin|Paris\n4. Имена начинающиеся на A или C (два LIKE через OR) → Alice|Carol\n5. Топ-3 самых высокооплачиваемых (ORDER BY + LIMIT) → Olivia|Noah|Mia`,code:null}
  ,{title:'ORDER BY + LIMIT',xp:15,type:'code',description:'Сортировка, ограничение, пагинация',code:`-- ORDER BY нескольким колонкам
 SELECT name, city, salary FROM users
 ORDER BY city ASC, salary DESC;
@@ -235,7 +235,7 @@ SELECT DISTINCT city FROM users ORDER BY city;
 
 -- COUNT строк с фильтром
 SELECT COUNT(*) as total, AVG(salary) as avg_sal FROM users WHERE salary > 80000;`}
- ,{title:'Задача: сортировка',xp:20,type:'task',description:`1. 5 самых молодых пользователей (имя, возраст, город)\n2. Топ-5 заказов по сумме (orders.amount) — выведи product и amount\n3. Уникальные города пользователей в алфавитном порядке\n4. Страница 3 пользователей по 4 записи (сортировка по id)`,code:null}
+ ,{title:'Задача: сортировка',xp:20,type:'task',description:`1. 5 самых молодых пользователей (имя, возраст, город) → Alice|Bob|Carol|David|Eve\n2. Топ-5 заказов по сумме (orders.amount) — выведи product и amount → 79990\n3. Уникальные города пользователей в алфавитном порядке → Amsterdam|Berlin|London|Paris|Prague\n4. Страница 3 пользователей по 4 записи (сортировка по id) → Iris|Jack|Karen|Leo`,code:null}
 ]},
 {id:'sql-p2',trackId:'sql',practice:true,emoji:'⚡',title:'Агрегации и подзапросы',steps:[
   {title:'GROUP BY + HAVING',xp:15,type:'code',description:'Группировка и агрегатные функции',code:`-- COUNT, SUM, AVG, MIN, MAX
@@ -259,7 +259,7 @@ SELECT dept_id, AVG(salary) AS avg_sal
 FROM users
 GROUP BY dept_id
 HAVING avg_sal > 85000;`}
- ,{title:'Задача: агрегации',xp:20,type:'task',description:`1. Количество пользователей в каждом городе (ORDER BY count DESC)\n2. Средняя зарплата по департаментам — покажи название департамента (JOIN)\n3. Общая сумма заказов (orders.amount) по каждому продукту\n4. Департаменты где средняя зарплата > 85000 (HAVING)\n5. Город с максимальным средним возрастом пользователей`,code:null}
+ ,{title:'Задача: агрегации',xp:20,type:'task',description:`1. Количество пользователей в каждом городе (ORDER BY count DESC) → London|Berlin|Paris|Amsterdam|Prague\n2. Средняя зарплата по департаментам — покажи название департамента (JOIN) → Analytics|HR|Sales|Marketing|Engineering\n3. Общая сумма заказов (orders.amount) по каждому продукту → Laptop|Smartphone|Tablet|Headphones|Monitor|Keyboard|Mouse|Webcam\n4. Департаменты где средняя зарплата > 85000 (HAVING) → Marketing|Sales|HR|Analytics\n5. Город с максимальным средним возрастом пользователей → Prague`,code:null}
  ,{title:'Подзапросы + CTE',xp:15,type:'code',description:'Вложенные запросы и Common Table Expressions',code:`-- Подзапрос в WHERE
 SELECT name, salary FROM users
 WHERE salary > (SELECT AVG(salary) FROM users);
@@ -278,7 +278,7 @@ SELECT d.name, ds.avg_sal, ds.cnt
 FROM dept_stats ds
 JOIN departments d ON d.id = ds.dept_id
 ORDER BY ds.avg_sal DESC;`}
- ,{title:'Задача: подзапросы',xp:20,type:'task',description:`1. Пользователи с зарплатой выше средней по всей компании\n2. Продукт с максимальной суммой продаж (подзапрос или CTE)\n3. CTE: средняя зарплата по городам — отфильтруй города где avg > 85000\n4. Пользователи чья зарплата выше средней в их же департаменте (коррелированный подзапрос)`,code:null}
+ ,{title:'Задача: подзапросы',xp:20,type:'task',description:`1. Пользователи с зарплатой выше средней по всей компании → Grace|Henry|Iris|Jack|Karen|Leo|Mia|Noah|Olivia\n2. Продукт с максимальной суммой продаж (подзапрос или CTE) → Smartphone\n3. CTE: средняя зарплата по городам — отфильтруй города где avg > 85000 → Berlin|Paris|Amsterdam|Prague\n4. Пользователи чья зарплата выше средней в их же департаменте (коррелированный подзапрос) → Karen|Frank|Leo|Grace|Mia|Noah|Olivia`,code:null}
 ]},
 {id:'sql-p3',trackId:'sql',practice:true,emoji:'⚡',title:'Оконные функции: практика',steps:[
   {title:'RANK + PARTITION',xp:15,type:'code',description:'Ранжирование внутри групп',code:`-- ROW_NUMBER, RANK, DENSE_RANK
@@ -297,7 +297,7 @@ FROM users;
 SELECT name, salary,
   SUM(salary) OVER (ORDER BY id) AS running_total
 FROM users;`}
- ,{title:'Задача: RANK',xp:20,type:'task',description:`1. Ранжируй пользователей по зарплате внутри каждого города (PARTITION BY city)\n2. Найди #1 по зарплате в каждом департаменте (вложенный запрос по dept_rank=1)\n3. Накопительная сумма заказов по дате (orders, SUM OVER ORDER BY order_date)\n4. Процент зарплаты от суммы зарплат своего департамента (ROUND(salary*100.0/SUM(salary) OVER (PARTITION BY dept_id),1))`,code:null}
+ ,{title:'Задача: RANK',xp:20,type:'task',description:`1. Ранжируй пользователей по зарплате внутри каждого города (PARTITION BY city) → Alice|Olivia\n2. Найди #1 по зарплате в каждом департаменте (вложенный запрос по dept_rank=1) → Karen|Leo|Mia|Noah|Olivia\n3. Накопительная сумма заказов по дате (orders, SUM OVER ORDER BY order_date) → 79990\n4. Процент зарплаты от суммы зарплат своего департамента (ROUND(salary*100.0/SUM(salary) OVER (PARTITION BY dept_id),1)) → Alice|Olivia`,code:null}
  ,{title:'LAG / LEAD',xp:15,type:'code',description:'Сравнение со соседними строками',code:`-- LAG: значение предыдущей строки
 SELECT name, salary,
   LAG(salary)  OVER (ORDER BY salary) AS prev_salary,
@@ -315,7 +315,7 @@ LIMIT 20;
 SELECT name, dept_id, salary,
   FIRST_VALUE(salary) OVER (PARTITION BY dept_id ORDER BY salary DESC) AS top_salary_in_dept
 FROM users;`}
- ,{title:'Задача: LAG/LEAD',xp:20,type:'task',description:`1. Для каждого пользователя: его зарплата и зарплата предыдущего (по id) — разница\n2. Для каждого заказа: предыдущий заказ того же пользователя (LAG PARTITION BY user_id)\n3. Найди пользователей чья зарплата на 15000+ больше предыдущего в сортировке по salary\n4. Разница между максимальной зарплатой в департаменте и каждым сотрудником (FIRST_VALUE)`,code:null}
+ ,{title:'Задача: LAG/LEAD',xp:20,type:'task',description:`1. Для каждого пользователя: его зарплата и зарплата предыдущего (по id) — разница → Alice|Olivia\n2. Для каждого заказа: предыдущий заказ того же пользователя (LAG PARTITION BY user_id) → 79990|49990\n3. Найди пользователей чья зарплата на 15000+ больше предыдущего в сортировке по salary → Mia|Noah|Olivia\n4. Разница между максимальной зарплатой в департаменте и каждым сотрудником (FIRST_VALUE) → Alice|Olivia`,code:null}
 ]}
 
 // PYTHON PRACTICE

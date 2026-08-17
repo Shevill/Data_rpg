@@ -273,7 +273,7 @@ print(evens)
 print(lengths)
 print(uniq_len)
 print(total)`}
- ,{title:'Задача: comprehensions',xp:20,type:'task',description:`Реши в одну строку через comprehension или generator.\n1. Кубы нечётных чисел от 1 до 19\n2. Словарь {число: "чётное"/"нечётное"} для чисел 1-10\n3. Множество уникальных букв фразы "data science" (без пробелов)\n4. Сумма квадратов чисел делящихся на 3 в диапазоне 1-100 (generator)`,code:null}
+ ,{title:'Задача: comprehensions',xp:20,type:'task',description:`Реши в одну строку через comprehension или generator.\n1. Кубы нечётных чисел от 1 до 19 → 6859\n2. Словарь {число: "чётное"/"нечётное"} для чисел 1-10 → чётное\n3. Множество уникальных букв фразы "data science" (без пробелов)\n4. Сумма квадратов чисел делящихся на 3 в диапазоне 1-100 (generator) → 112761`,code:null}
  ,{title:'lambda, map, filter, zip',xp:15,type:'code',description:'Функциональные инструменты',code:`# lambda
 double = lambda x: x * 2
 clamp  = lambda x, lo, hi: max(lo, min(hi, x))
@@ -295,7 +295,7 @@ print(paired)
 data = [{'name':'Bob','age':30},{'name':'Alice','age':25},{'name':'Eve','age':27}]
 by_age = sorted(data, key=lambda d: d['age'])
 print(by_age)`}
- ,{title:'Задача: functional',xp:20,type:'task',description:`1. map: список температур в Цельсиях → Фаренгейт (F = C*9/5 + 32) — входные данные придумай сам\n2. filter: из списка слов оставь только длиннее 4 букв\n3. zip: объедини [1,2,3] и ['a','b','c'] в словарь {1:'a', 2:'b', 3:'c'}\n4. sorted с двумя ключами: сначала по длине строки, при равной длине — алфавитно`,code:null}
+ ,{title:'Задача: functional',xp:20,type:'task',description:`1. map: список температур в Цельсиях → Фаренгейт (F = C*9/5 + 32) — входные данные придумай сам\n2. filter: из списка слов оставь только длиннее 4 букв\n3. zip: объедини [1,2,3] и ['a','b','c'] в словарь {1:'a', 2:'b', 3:'c'} → 1: 'a'\n4. sorted с двумя ключами: сначала по длине строки, при равной длине — алфавитно`,code:null}
 ]},
 {id:'py-p2',trackId:'python',practice:true,emoji:'⚡',title:'Строки, datetime, collections',steps:[
   {title:'Строковые методы',xp:15,type:'code',description:'Методы строк, f-строки, форматирование',code:`text = "  Hello, Data Science World!  "
@@ -321,7 +321,7 @@ print(f'{name}: {score:.1f}%')
 print(f'{name:>10} | {score:08.2f}')  # выравнивание
 print(f'{"="*30}')
 print(f'Pi = {pi:.4f}')`}
- ,{title:'Задача: строки',xp:20,type:'task',description:`1. Из строки "2024-03-15" извлеки год, месяц, день через split — выведи "15 марта 2024"\n2. Функция is_palindrome(s) → bool (игнор регистр и пробелы)\n3. Подсчёт частоты слов: из любого текста верни dict {слово: кол-во}, lowercase, без знаков препинания\n4. f-string таблица: выведи 5 строк формата: имя (15 символов, левое выравнивание) | зарплата (10 символов, правое, с запятыми)`,code:null}
+ ,{title:'Задача: строки',xp:20,type:'task',description:`1. Из строки "2024-03-15" извлеки год, месяц, день через split — выведи "15 марта 2024" → 15 марта 2024\n2. Функция is_palindrome(s) → bool (игнор регистр и пробелы)\n3. Подсчёт частоты слов: из любого текста верни dict {слово: кол-во}, lowercase, без знаков препинания\n4. f-string таблица: выведи 5 строк формата: имя (15 символов, левое выравнивание) | зарплата (10 символов, правое, с запятыми)`,code:null}
  ,{title:'datetime + collections',xp:15,type:'code',description:'Даты и полезные типы данных',code:`from datetime import datetime, timedelta
 from collections import Counter, defaultdict
 
@@ -345,7 +345,7 @@ data   = [('Alice','Eng'),('Bob','HR'),('Carol','Eng'),('Dave','HR')]
 for name, dept in data:
     groups[dept].append(name)
 print(dict(groups))`}
- ,{title:'Задача: datetime + collections',xp:20,type:'task',description:`1. Дней до Нового года (1 января следующего года) — используй datetime\n2. Counter из списка оценок [5,4,3,5,4,5,3,2,5] — топ-2 и сколько раз встречаются\n3. defaultdict: сгруппируй слова по первой букве из любого списка слов\n4. Разница в днях между датами '2024-01-15' и '2024-11-30' через strptime`,code:null}
+ ,{title:'Задача: datetime + collections',xp:20,type:'task',description:`1. Дней до Нового года (1 января следующего года) — используй datetime\n2. Counter из списка оценок [5,4,3,5,4,5,3,2,5] — топ-2 и сколько раз встречаются → (5, 4)\n3. defaultdict: сгруппируй слова по первой букве из любого списка слов\n4. Разница в днях между датами '2024-01-15' и '2024-11-30' через strptime → 320`,code:null}
 ]}
 
 // DS PRACTICE

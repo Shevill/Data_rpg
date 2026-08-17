@@ -35,12 +35,12 @@ function renderMain(){
 
   return`
 <div style="padding-top:8px">
-  <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase">🧙 Data RPG</div>
+  <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase">🥷 Data RPG</div>
 
   <!-- Hero card -->
   <div class="card card-purple" style="margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <div style="font-size:44px;line-height:1">🧙</div>
+      <div style="font-size:44px;line-height:1">🥷</div>
       <div style="flex:1">
         <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">Data Mage</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">

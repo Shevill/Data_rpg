@@ -18,6 +18,7 @@ function render(){
   else if(screen==='track')app.innerHTML=renderTrack(activeTrack);
   else if(screen==='quest')app.innerHTML=renderQuest(activeQuest);
   else if(screen==='review')app.innerHTML=renderReview();
+  if(screen==='track'&&_monsterHit){const xp=_monsterHit;_monsterHit=0;setTimeout(()=>triggerAttack(xp),80);}
 }
 
 // ============================================================
@@ -156,6 +157,8 @@ function renderTrack(trackId){
     <div class="progress-fill" style="height:100%;width:${pct}%;border-radius:8px;background:${track.color}"></div>
   </div>
 
+  ${renderMonsterPanel(trackId)}
+
   <div>
     ${qs.map((q,idx)=>{
       const{icon,bg,color}=statusIcon(q,idx);
@@ -216,8 +219,6 @@ function renderQuest(questId){
         +`<div style="width:34px;height:34px;border-radius:50%;background:${colors[cls]};display:flex;align-items:center;justify-content:center;font-size:14px;color:${tc[cls]};flex-shrink:0${active?`;box-shadow:0 0 0 3px ${track.color}40`:''}">${done?'✓':stepLabels[i]}</div>`;
     }).join('')}
   </div>
-
-  ${renderMonsterPanel(quest,qp)}
 
   ${quest.steps.map((step,i)=>{
     const isDone=qp.steps[i];
@@ -370,9 +371,8 @@ function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(
 function doStep(questId,stepIdx,xpAmount){
   const{gained,leveledUp}=State.completeStep(questId,stepIdx,xpAmount);
   showXP('+'+gained+' XP');
-  triggerAttack(gained);
   const qp=State.getQP(questId);
-  if(qp.completed){setTimeout(()=>{confetti();render();},500);}
+  if(qp.completed){_monsterHit=gained;setTimeout(()=>{confetti();render();},500);}
   else setTimeout(render,500);
   if(leveledUp)setTimeout(()=>showLevelUp(State.level),1100);
 }

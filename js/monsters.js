@@ -5,26 +5,33 @@ const MONSTERS = {
   ml:     { emoji: '🤖', name: 'Neural Golem',     sub: 'Iron Dungeon  •  Rank A'  },
   cv:     { emoji: '👁️', name: 'The Watcher',     sub: 'Abyss Dungeon  •  Rank S' },
 };
-const BOSS_MONSTER = { emoji: '👹', name: '⚔ DUNGEON BOSS ⚔', sub: 'S-Rank Gate  •  FINAL' };
 
-function renderMonsterPanel(quest, qp) {
-  const mon = quest.isBoss ? BOSS_MONSTER : (MONSTERS[quest.trackId] || MONSTERS.ml);
-  const track = TRACKS.find(t => t.id === quest.trackId);
+// xp of completed quest pending animation; consumed when track screen renders
+let _monsterHit = 0;
+
+function getTrackMonsterState(trackId) {
+  const mainQs = QUESTS.filter(q => q.trackId === trackId && !q.practice);
+  const total = mainQs.length;
+  const done = mainQs.filter(q => State.getQP(q.id).completed).length;
+  const boss = mainQs.find(q => q.isBoss);
+  const defeated = boss ? State.getQP(boss.id).completed : false;
+  return { total, remaining: total - done, pct: total > 0 ? Math.round((total - done) / total * 100) : 0, defeated };
+}
+
+function renderMonsterPanel(trackId) {
+  const mon = MONSTERS[trackId] || MONSTERS.ml;
+  const track = TRACKS.find(t => t.id === trackId);
   const color = track ? track.color : '#8b5cf6';
-  const total = quest.steps.length;
-  const done = qp.steps.filter(Boolean).length;
-  const remaining = total - done;
-  const hpPct = total > 0 ? Math.round((remaining / total) * 100) : 0;
-  const defeated = remaining === 0;
+  const { total, remaining, pct, defeated } = getTrackMonsterState(trackId);
 
-  return `<div class="monster-arena${quest.isBoss ? ' boss-arena' : ''}" id="monster-arena" style="--mon-color:${color}">
+  return `<div class="monster-arena" id="monster-arena" style="--mon-color:${color}">
   <div class="monster-name">${mon.name}</div>
   <div class="monster-sub">${mon.sub}</div>
-  <div class="monster-figure${quest.isBoss ? ' boss-figure' : ''}${defeated ? ' defeated' : ''}" id="monster-figure">${mon.emoji}</div>
+  <div class="monster-figure${defeated ? ' defeated' : ''}" id="monster-figure">${mon.emoji}</div>
   <div class="monster-hp-row">
     <div class="monster-hp-lbl">HP</div>
-    <div class="monster-hp-track"><div class="monster-hp-fill" id="monster-hp-fill" style="width:${hpPct}%"></div></div>
-    <div class="monster-hp-num" id="monster-hp-num">${remaining}/${total}</div>
+    <div class="monster-hp-track"><div class="monster-hp-fill" id="monster-hp-fill" style="width:${pct}%"></div></div>
+    <div class="monster-hp-num">${remaining}/${total}</div>
   </div>
   ${defeated ? '<div class="monster-defeated-overlay"><div class="monster-defeated-txt">DEFEATED</div></div>' : ''}
 </div>`;

@@ -44,6 +44,11 @@ function renderTaskStep(step,questId,stepIdx,quest){
   const accent=isSql?'#10b981':'#3b82f6';
   const desc=getStepDesc(quest,stepIdx);
   const items=parseTaskItems(desc);
+  // → expected annotations are only in RU descriptions; merge from source when EN mode
+  if(quest?.steps[stepIdx]?.description){
+    const ruItems=parseTaskItems(quest.steps[stepIdx].description);
+    items.forEach((it,i)=>{if(!it.expected)it.expected=ruItems[i]?.expected||null;});
+  }
   const checks=State.getTaskChecks(questId,stepIdx);
 
   // no numbered items → fallback to old single AI block
@@ -103,6 +108,11 @@ async function checkTaskItem(questId,stepIdx,itemIdx){
   const quest=QUESTS.find(q=>q.id===questId);
   const step=quest?.steps[stepIdx];
   const items=parseTaskItems(getStepDesc(quest,stepIdx));
+  // → expected annotations are only in RU descriptions; merge from source when EN mode
+  if(quest?.steps[stepIdx]?.description){
+    const ruItems=parseTaskItems(quest.steps[stepIdx].description);
+    items.forEach((it,i)=>{if(!it.expected)it.expected=ruItems[i]?.expected||null;});
+  }
   const item=items[itemIdx]||{};
   const ta=document.getElementById(`tcode-${questId}-${stepIdx}-${itemIdx}`);
   const code=(ta?.value||'').trim();

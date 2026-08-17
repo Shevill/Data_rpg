@@ -5,7 +5,15 @@ function parseTaskItems(desc){
   const items=[];
   for(const line of desc.split('\n')){
     const m=line.match(/^(\d+)\.\s*(.+)/);
-    if(m)items.push({num:parseInt(m[1]),text:m[2].trim()});
+    if(m){
+      const rest=m[2].trim();
+      const arrow=rest.lastIndexOf('→');
+      if(arrow!==-1){
+        items.push({num:parseInt(m[1]),text:rest.slice(0,arrow).trim(),expected:rest.slice(arrow+1).trim()});
+      }else{
+        items.push({num:parseInt(m[1]),text:rest,expected:null});
+      }
+    }
   }
   return items;
 }
@@ -71,76 +79,79 @@ function renderTaskStep(step,questId,stepIdx,quest){
     +itemsHtml+checklistHtml;
 }
 
+function _markItemAccepted(questId,stepIdx,itemIdx,items,out,step,msg){
+  out.style.display='block';out.className='ai-out approved';out.textContent=msg;
+  State.setTaskCheck(questId,stepIdx,itemIdx);
+  const row=document.getElementById(`check-${questId}-${stepIdx}-${itemIdx}`);
+  if(row){
+    const box=row.querySelector('span:first-child');
+    const lbl=row.querySelector('span:last-child');
+    if(box){box.style.background='#22c55e';box.style.borderColor='#22c55e';box.textContent='✓';}
+    if(lbl)lbl.style.color='#6ee7b7';
+  }
+  const prog=document.querySelector(`#check-${questId}-${stepIdx}-0`)?.closest('div[style*="padding:10px"]')?.querySelector('div:first-child');
+  if(prog){const c=State.getTaskChecks(questId,stepIdx).filter(Boolean).length;prog.textContent=`Прогресс — ${c}/${items.length}`;}
+  const btn=out.previousElementSibling;
+  if(btn&&btn.tagName==='BUTTON'){btn.style.opacity='0.45';btn.textContent=btn.textContent.replace(' ✓','')+' ✓';}
+  if(State.allTaskChecked(questId,stepIdx,items.length)){
+    const doneBtn=document.getElementById(`done-${questId}-${stepIdx}`);
+    if(doneBtn){doneBtn.removeAttribute('disabled');doneBtn.style.opacity='1';doneBtn.style.cursor='pointer';doneBtn.onclick=()=>doStep(questId,stepIdx,step.xp);}
+  }
+}
+
 async function checkTaskItem(questId,stepIdx,itemIdx){
   const quest=QUESTS.find(q=>q.id===questId);
   const step=quest?.steps[stepIdx];
   const items=parseTaskItems(getStepDesc(quest,stepIdx));
-  const itemText=items[itemIdx]?.text||'';
+  const item=items[itemIdx]||{};
   const ta=document.getElementById(`tcode-${questId}-${stepIdx}-${itemIdx}`);
   const code=(ta?.value||'').trim();
   if(!code){alert(t('noCodeAlert'));return;}
   const runOut=ta?.closest('.sql-cell,.py-cell')?.querySelector('.run-output');
-  const result=(runOut&&runOut.textContent||'').slice(0,400);
+  const result=(runOut&&runOut.textContent||'').slice(0,600);
   const out=document.getElementById(`itemout-${questId}-${stepIdx}-${itemIdx}`);
+
+  // ── Local check if expected output defined (no AI needed) ──
+  if(item.expected){
+    const haystack=result.toLowerCase().replace(/\s+/g,' ').trim();
+    const variants=item.expected.split('|').map(s=>s.toLowerCase().trim());
+    const match=variants.some(v=>v&&haystack.includes(v));
+    if(match){
+      _markItemAccepted(questId,stepIdx,itemIdx,items,out,step,'✓ Вывод совпадает с ожидаемым');
+    }else{
+      out.style.display='block';out.className='ai-out rejected';
+      out.textContent=`✗ Ожидалось: ${item.expected}\nПолучено: ${result.slice(0,120)||'(нет вывода — запусти код)'}`;
+    }
+    return;
+  }
+
+  // ── AI check (Groq) ──
+  const key=getGroqKey();
+  if(!key){
+    out.style.display='block';out.className='ai-out rejected';
+    out.textContent='Нет ключа Groq API.\nУстанови в консоли браузера:\nlocalStorage.setItem(\'mlrpg_groq_key\', \'gsk_...\')';
+    return;
+  }
+
   out.style.display='block';out.className='ai-out';out.textContent=t('aiItemChecking');
   try{
     const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
-      headers:{'Authorization':'Bearer '+getGroqKey(),'Content-Type':'application/json'},
+      headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'llama-3.3-70b-versatile',max_tokens:200,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
-          ?`You are a Data Science mentor. Check one specific task item.
-
-Item: ${itemText}
-
-Student code:
-${code}
-${result?'\nOutput:\n'+result:''}
-
-Reply: 1-2 sentences. Last line only: ACCEPTED or RETRY`
-          :`Ты ментор по Data Science. Проверь один конкретный пункт задания.
-
-Пункт: ${itemText}
-
-Код студента:
-${code}
-${result?'\nРезультат:\n'+result:''}
-
-Ответ: 1-2 предложения. Последняя строка — только: ПРИНЯТО или ПОВТОРИТЬ`}]
+          ?`You are a Data Science mentor. Check one specific task item.\n\nItem: ${item.text}\n\nStudent code:\n${code}${result?'\nOutput:\n'+result:''}\n\nReply: 1-2 sentences. Last line only: ACCEPTED or RETRY`
+          :`Ты ментор по Data Science. Проверь один конкретный пункт задания.\n\nПункт: ${item.text}\n\nКод студента:\n${code}${result?'\nРезультат:\n'+result:''}\n\nОтвет: 1-2 предложения. Последняя строка — только: ПРИНЯТО или ПОВТОРИТЬ`}]
       })
     });
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${resp.status}`);}
     const data=await resp.json();
-    const txt=data.choices?.[0]?.message?.content||'Нет ответа';
-    out.textContent=txt;
+    const txt=data.choices?.[0]?.message?.content||'';
+    if(!txt)throw new Error('Пустой ответ от API');
     const ok=txt.toUpperCase().includes('ПРИНЯТО')||txt.toUpperCase().includes('ACCEPTED');
-    out.className='ai-out '+(ok?'approved':'rejected');
-    if(ok){
-      State.setTaskCheck(questId,stepIdx,itemIdx);
-      // update checkbox
-      const row=document.getElementById(`check-${questId}-${stepIdx}-${itemIdx}`);
-      if(row){
-        const box=row.querySelector('span:first-child');
-        const lbl=row.querySelector('span:last-child');
-        if(box){box.style.background='#22c55e';box.style.borderColor='#22c55e';box.textContent='✓';}
-        if(lbl)lbl.style.color='#6ee7b7';
-      }
-      // update progress label
-      const prog=document.querySelector(`#check-${questId}-${stepIdx}-0`)?.closest('div[style*="padding:10px"]')?.querySelector('div:first-child');
-      if(prog){const c=State.getTaskChecks(questId,stepIdx).filter(Boolean).length;prog.textContent=`Прогресс — ${c}/${items.length}`;}
-      // check btn style
-      const btn=out.previousElementSibling;
-      if(btn&&btn.tagName==='BUTTON'){btn.style.opacity='0.45';btn.textContent=btn.textContent.replace(' ✓','')+' ✓';}
-      // enable Done if all checked
-      if(State.allTaskChecked(questId,stepIdx,items.length)){
-        const doneBtn=document.getElementById(`done-${questId}-${stepIdx}`);
-        if(doneBtn){
-          doneBtn.removeAttribute('disabled');
-          doneBtn.style.opacity='1';doneBtn.style.cursor='pointer';
-          doneBtn.onclick=()=>doStep(questId,stepIdx,step.xp);
-        }
-      }
-    }
+    out.textContent=txt;out.className='ai-out '+(ok?'approved':'rejected');
+    if(ok)_markItemAccepted(questId,stepIdx,itemIdx,items,out,step,txt);
   }catch(e){out.textContent='✗ '+e.message;out.className='ai-out rejected';}
 }
 

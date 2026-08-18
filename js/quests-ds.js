@@ -131,5 +131,119 @@ print(f'Bootstrap CI медианы: ({med_low:.2f}, {med_high:.2f})')`}
  ,{title:'Задача: CI',xp:20,type:'task',description:`1. Для выборки Normal(200, 30) n=50 — вычисли 90%, 95%, 99% CI. Как меняется ширина?\n2. Bootstrap CI для медианы — сравни с CI для среднего на скошенных данных (np.random.exponential)\n3. Как меняется ширина 95% CI при n=30, 100, 500, 1000? Нарисуй график ширины vs n\n4. CI = (92.5, 107.5) для среднего балла — что это означает? Можешь ли сказать что истинное среднее = 100?`,code:null}
 ]}
 
+,{id:'ds6',trackId:'ds',title:'Ранжирование и временные ряды',emoji:'📈',isBoss:false,steps:[
+  {title:'Теория: ранжирование и временные ряды',xp:10,type:'theory',
+   description:'Ранжирование — способ позиционирования объектов относительно друг друга.\n\nРанжирование в pandas:\n• df.rank() — глобальный ранг\n• df.rank(method="dense") — без пропусков\n• df.groupby("dept")["salary"].rank(ascending=False) — ранг внутри группы\n• df["pct"] = df["val"].rank(pct=True) — процентильный ранг [0,1]\n\nВременные ряды:\n• pd.to_datetime() — конвертация в datetime\n• df.set_index("date") — DatetimeIndex для ресэмплинга\n• df.resample("ME").sum() — агрегация по месяцам\n• df.rolling(7).mean() — скользящее среднее за 7 дней\n• df.pct_change() — изменение период к периоду\n• df.shift(1) — смещение на 1 период назад\n\nLag-признаки: значение предыдущего периода — часто самый сильный предиктор.\nRolling stats: скользящие средние, стд — детрендинг, обнаружение аномалий.',
+   code:null},
+  {title:'Код: rank и временные ряды',xp:15,type:'code',
+   description:'Ранжирование и работа с датами в pandas',
+   code:`import pandas as pd
+import numpy as np
+
+# --- Ранжирование ---
+df = pd.DataFrame({
+    'name': ['Alice','Bob','Carol','David','Eve','Frank'],
+    'dept': ['Sales','HR','Sales','HR','Sales','Finance'],
+    'revenue': [120, 85, 150, 95, 110, 130]
+})
+
+# Глобальный ранг
+df['global_rank'] = df['revenue'].rank(ascending=False, method='dense').astype(int)
+
+# Ранг внутри отдела
+df['dept_rank'] = df.groupby('dept')['revenue'].rank(ascending=False, method='dense').astype(int)
+
+# Процентильный ранг
+df['pct_rank'] = df['revenue'].rank(pct=True).round(2)
+
+print("Ранжирование:")
+print(df[['name','dept','revenue','global_rank','dept_rank','pct_rank']].to_string(index=False))
+
+# --- Временные ряды ---
+np.random.seed(42)
+dates = pd.date_range('2024-01-01', periods=90, freq='D')
+ts = pd.Series(
+    100 + np.cumsum(np.random.randn(90)) + np.arange(90)*0.3,
+    index=dates, name='revenue'
+)
+
+print("\\nВременной ряд:")
+print(f"Период: {ts.index[0].date()} — {ts.index[-1].date()}")
+print(f"Среднее: {ts.mean():.1f}")
+
+# Скользящее среднее
+ts_7d = ts.rolling(7).mean()
+print(f"\\nРолл. среднее 7д (последние 3):")
+print(ts_7d.tail(3).round(2))
+
+# Месячная агрегация
+monthly = ts.resample('ME').agg(['mean','sum','count'])
+print("\\nМесячно:")
+print(monthly.round(1))`},
+  {title:'Задача: ранжирование',xp:20,type:'task',
+   description:`Используй df выше (Alice/Bob/Carol/David/Eve/Frank).\n1. dept_rank==1: топ по выручке в каждом отделе → Carol|David|Frank\n2. Процентильный ранг Alice (revenue=120) среди всех 6 → 0.67|0.667|0.6\n3. pd.date_range('2024-01', periods=12, freq='MS') — первый и последний элемент → 2024-01|2024-12\n4. rolling(3).mean() на series [10,20,30,40,50]: значение на позиции index=2 → 20.0|20`,
+   code:null},
+  {title:'Recall: ранги и ряды',xp:10,type:'recall',
+   description:'За 2 минуты:\n1. Разница rank(method="min") vs rank(method="dense") при ничьих\n2. Что делает df.resample("ME").mean()?\n3. Зачем нужен shift(1) при создании признаков для ML?\n4. Как найти аномальные точки временного ряда через rolling?',
+   code:null}
+]}
+,{id:'ds7',trackId:'ds',title:'Регрессионный анализ',emoji:'📉',isBoss:false,steps:[
+  {title:'Теория: регрессия',xp:10,type:'theory',
+   description:'Регрессионный анализ — предсказание числового таргета на основе признаков.\n\nЛинейная регрессия:\nŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ\n\nМетрики качества:\n• MAE = mean(|y - ŷ|) — в единицах таргета, устойчив к выбросам\n• RMSE = √mean((y-ŷ)²) — штрафует большие ошибки сильнее\n• R² = 1 - SS_res/SS_tot ∈ (-∞, 1] — доля объяснённой дисперсии\n\nПроблемы:\n• Мультиколлинеарность — признаки сильно коррелируют → нестабильные коэффициенты\n• Гетероскедастичность — дисперсия ошибок непостоянна\n• Выбросы — сильно влияют на RMSE и параметры модели\n\nРегуляризация:\n• Ridge (L2): β → 0, уменьшает мультиколлинеарность\n• Lasso (L1): β = 0, отбор признаков (sparse solution)\n• ElasticNet: L1 + L2\n\nОстатки (residuals) должны быть:\n• Нормально распределены\n• Нет тренда относительно ŷ\n• Нет автокорреляции',
+   code:null},
+  {title:'Код: LinearRegression и регуляризация',xp:15,type:'code',
+   description:'sklearn: LinearRegression, Ridge, Lasso — сравнение',
+   code:`import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+np.random.seed(42)
+n = 200
+
+# Синтетический датасет: цена квартиры
+area   = np.random.uniform(30, 150, n)
+rooms  = np.round(area / 30 + np.random.randn(n)*0.5).clip(1, 6)
+floor  = np.random.randint(1, 26, n)
+price  = 50000 + area*2000 + rooms*15000 + floor*500 + np.random.randn(n)*20000
+
+df = pd.DataFrame({'area':area,'rooms':rooms,'floor':floor,'price':price})
+
+X = df[['area','rooms','floor']]
+y = df['price']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+sc = StandardScaler()
+X_tr_sc = sc.fit_transform(X_train)
+X_te_sc = sc.transform(X_test)
+
+results = {}
+for name, model in [('LinearReg', LinearRegression()),
+                    ('Ridge α=1',  Ridge(alpha=1)),
+                    ('Ridge α=10', Ridge(alpha=10)),
+                    ('Lasso α=100',Lasso(alpha=100))]:
+    model.fit(X_tr_sc, y_train)
+    pred = model.predict(X_te_sc)
+    results[name] = {
+        'MAE': int(mean_absolute_error(y_test, pred)),
+        'RMSE': int(mean_squared_error(y_test, pred)**0.5),
+        'R²': round(r2_score(y_test, pred), 3)
+    }
+    print(f"{name:15s}: MAE={results[name]['MAE']:6,}  RMSE={results[name]['RMSE']:6,}  R²={results[name]['R²']}")
+
+# Коэффициенты LinReg
+lr = LinearRegression().fit(X_tr_sc, y_train)
+for feat, coef in zip(X.columns, lr.coef_):
+    print(f"  {feat}: {coef:+.0f}")`},
+  {title:'Задача: регрессия',xp:20,type:'task',
+   description:'Возьми Boston Housing или любой числовой датасет с price/salary/value таргетом:\n1. Обучи LinearRegression — выведи R² и RMSE\n2. Сравни Ridge(alpha=1, 10, 100) — какой alpha лучше на val?\n3. Найди самый значимый признак (наибольший |coef| после StandardScaler)\n4. Остатки: scatter plot residuals vs predicted — есть ли паттерн (гетероскедастичность)?',
+   code:null},
+  {title:'Recall: регрессия',xp:10,type:'recall',
+   description:'За 2 минуты:\n1. MAE vs RMSE — когда какой предпочесть?\n2. R²=0.72 — что это означает?\n3. Зачем нужна регуляризация Ridge/Lasso?\n4. Как мультиколлинеарность ломает интерпретацию коэффициентов?',
+   code:null}
+]}
+
 // ML PRACTICE
 );

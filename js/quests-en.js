@@ -1008,5 +1008,55 @@ def predict_tensor(model, tensor):
         out   = model(tensor.unsqueeze(0))
         probs = torch.softmax(out, dim=1)`},
   {title:'Task: inference',d:'1. Save and load a trained model — confirm predictions match before and after\n2. Write predict_image(model, image_path) → (class_idx, confidence) for a real file\n3. Batch inference: predict_batch(model, image_paths) — process list, return DataFrame\n4. Benchmark: single image vs batch of 32 — why is batch faster on GPU?'}
+]},
+// DS extensions
+'ds6':{title:'Ranking & Time Series',steps:[
+  {title:'Theory: ranking & time series',d:'df.rank() vs df.rank(method="dense"). Percentile rank: rank(pct=True). Group rank: groupby().rank(). Time series: DatetimeIndex, resample("ME"), rolling(n), pct_change(), shift(n).'},
+  {title:'Code: rank & resample',d:'Run examples: df.rank(), groupby rank, pd.date_range, rolling mean.'},
+  {title:'Task: ranking',d:'Use df with Alice/Bob/Carol/David/Eve/Frank and revenues.\n1. dept_rank==1: top per dept → Carol|David|Frank\n2. Percentile rank of Alice (revenue=120) → 0.67|0.667|0.6\n3. pd.date_range("2024-01", periods=12, freq="MS"): first and last → 2024-01|2024-12\n4. rolling(3).mean() on [10,20,30,40,50]: value at index=2 → 20.0|20'},
+  {title:'Recall',d:'rank(dense) vs rank(min). resample meaning. shift for lag features. rolling for anomaly detection.'}
+]},
+'ds7':{title:'Regression Analysis',steps:[
+  {title:'Theory: regression',d:'Linear regression: ŷ=β₀+β₁x. MAE vs RMSE vs R². Multicollinearity. Regularization: Ridge(L2)→shrink, Lasso(L1)→zero. Residuals should be random.'},
+  {title:'Code: LinearRegression & regularization',d:'Compare LinearRegression, Ridge(alpha=1,10), Lasso on synthetic housing data.'},
+  {title:'Task: regression',d:'Use Boston Housing or any numeric target dataset.\n1. LinearRegression R² and RMSE\n2. Best Ridge alpha on val\n3. Most important feature (largest |coef| after StandardScaler)\n4. Residuals plot — any pattern?'},
+  {title:'Recall',d:'MAE vs RMSE tradeoffs. R²=0.72 meaning. Why regularize. Multicollinearity effects.'}
+]},
+// AB track
+'ab1':{title:'CLT & Normal Distribution',steps:[
+  {title:'Theory: CLT',d:'Central Limit Theorem: sample means X̄ ~ N(μ, σ²/n) as n grows. SE = σ/√n. For proportions: SE = √(p(1-p)/n). Z-score: z=(X̄-μ)/SE. 68-95-99.7 rule.'},
+  {title:'Code: CLT simulation',d:'Simulate CLT: exponential population, show sample means normalize as n grows. SE matches theory.'},
+  {title:'Task: CLT calculations',d:'1. p=0.08, n=2000: SE → 0.006|0.0061\n2. seed(0), 10000 samples n=40 from Uniform(0,1): SE of means → 0.045|0.046|0.0456\n3. SE halved — n increased by → 4\n4. z-score: X̄=52, μ=50, σ=8, n=64 → 2.0'},
+  {title:'Recall',d:'CLT claim. SE vs n (quadratic). SE formula for proportions. Why CLT enables A/B tests.'}
+]},
+'ab2':{title:'Confidence Intervals',steps:[
+  {title:'Theory: CI',d:'95% CI = p̂ ± 1.96·SE. Z values: 90%→1.645, 95%→1.96, 99%→2.576. Correct interpretation: 95% of such intervals contain the true parameter. Width ∝ 1/√n.'},
+  {title:'Code: CI calculation',d:'ci_proportion(p_hat, n, confidence). Show width vs n. ci_mean for sample data.'},
+  {title:'Task: CI',d:'1. p̂=0.15, n=400: lower bound of 95% CI → 0.115|0.1150\n2. p̂=0.15, n=1600: lower bound of 95% CI → 0.1325|0.132\n3. Why is n=1600 CI half as wide as n=400? → 4|four times\n4. 95% CI = (0.09, 0.13). Significant vs 0.10? → no|not significant'},
+  {title:'Recall',d:'Correct CI interpretation. Z values for 90/95/99%. Width vs n. CI includes 0 meaning.'}
+]},
+'ab3':{title:'Hypothesis Testing',steps:[
+  {title:'Theory: hypotheses & errors',d:'H₀ vs H₁. p-value = P(data|H₀). Type I error (α=false positive). Type II error (β=false negative). Power=1-β. Multiple testing: FWER=1-(1-α)^k. Bonferroni: α\'=α/k.'},
+  {title:'Code: two-proportion z-test',d:'Implement two_prop_ztest from scratch. Show multiple testing FWER.'},
+  {title:'Task: hypotheses',d:'1. Control n=3000 conv=330, treat n=3000 conv=390: p_value → 0.017|0.0172|0.016\n2. p_value < 0.05? → yes|да|true\n3. P(at least 1 false positive, 3 tests, α=0.05) → 0.142|0.143|14%\n4. Stopped test early when p=0.03 — why wrong? → type I|false positive|peeking'},
+  {title:'Recall',d:'Strict p-value definition. Type I vs II — which worse in business. Peeking problem. Bonferroni correction.'}
+]},
+'ab4':{title:'Experiment Design',steps:[
+  {title:'Theory: power & sample size',d:'4 linked parameters: α, β, power=1-β, MDE. n formula: (z_α/2+z_β)²·[p_a(1-p_a)+p_b(1-p_b)]/δ². MDE halved → n×4. Power 80→90% → n+34%.'},
+  {title:'Code: sample size',d:'sample_size(p_base, mde, alpha, power). Show MDE vs n table. SRM chi2 check.'},
+  {title:'Task: design',d:'1. sample_size(0.05, 0.01): n per group → 8157|8158\n2. MDE halved → n increases by → 4\n3. Traffic 2000/day, 7 days, 50/50 split → 7000/group. Enough for n=8157? → no|нет\n4. Power 90% vs 80%, same MDE — n bigger or smaller? → bigger|больше'},
+  {title:'Recall',d:'Power 50% meaning. Who defines MDE. Why no early stopping. SRM detection.'}
+]},
+'ab5':{title:'Full A/B Test',steps:[
+  {title:'Theory: full cycle',d:'7 steps: hypothesis → metric → sample size → randomization → AA test → launch+monitor → analysis → decision. Key pitfalls: peeking, SRM, novelty effect, network effects, multiple testing.'},
+  {title:'Code: full analysis',d:'🚫 No hints. Write full A/B analysis: SRM check, z-test, CI for uplift, business decision.'},
+  {title:'Task: A/B project',d:'No hints. Real or simulated test:\n1. Business hypothesis + primary metric + guardrail\n2. Calculate n — show steps\n3. Z-test: p-value + 95% CI for difference\n4. SRM check via chi-square\n5. Business conclusion: ship the feature?'},
+  {title:'Recall',d:'7 steps of A/B cycle. SRM criticality. Type I/II errors in e-commerce. Peeking explained.'}
+]},
+'ab-p1':{title:'Stats Practice',steps:[
+  {title:'Statistical tests',d:'one_sample_ztest, two_prop_ztest, srm_chi2, sample_size — all from scratch.'},
+  {title:'Task: tests',d:'1. one_sample_ztest(seed(42), Normal(105,15), n=100, mu0=100): p<0.05? → yes|да|true\n2. two_prop_ztest(1000,85,1000,110): p<0.05? → no|нет|false\n3. srm_chi2(4823,5177): χ²>3.841? → yes|да|true\n4. sample_size(0.10, 0.02) → 3840|3839|3841|3842'},
+  {title:'Power simulation',d:'simulate_power: empirical vs analytic n. Show power vs n table.'},
+  {title:'Task: power',d:'1. simulate_power(0.10, 0.12, 3840, n_sims=2000): close to 80%? → yes|да|true|0.8\n2. simulate_power at n=500: below 80%? → yes|да|true\n3. Power 50% means: detects effect → 50%|coin flip|random\n4. Who sets the MDE? → business|product|бизнес'}
 ]}
 };

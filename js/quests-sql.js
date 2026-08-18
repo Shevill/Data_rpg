@@ -318,5 +318,56 @@ FROM users;`}
  ,{title:'Задача: LAG/LEAD',xp:20,type:'task',description:`1. Для каждого пользователя: его зарплата и зарплата предыдущего (по id) — разница → Alice|Olivia\n2. Для каждого заказа: предыдущий заказ того же пользователя (LAG PARTITION BY user_id) → 79990|49990\n3. Найди пользователей чья зарплата на 15000+ больше предыдущего в сортировке по salary → Mia|Noah|Olivia\n4. Разница между максимальной зарплатой в департаменте и каждым сотрудником (FIRST_VALUE) → Alice|Olivia`,code:null}
 ]}
 
+,{id:'sql-p4',trackId:'sql',practice:true,emoji:'⚡',title:'Оптимизация запросов',steps:[
+  {title:'EXPLAIN и индексы',xp:15,type:'code',description:'Анализируй планы запросов и создавай индексы',code:`-- EXPLAIN QUERY PLAN показывает как SQLite выполняет запрос
+EXPLAIN QUERY PLAN
+SELECT name, salary FROM users WHERE city = 'London' ORDER BY salary DESC;
+-- Результат: SCAN TABLE users (полный перебор!)
+
+-- Создаём индекс по city
+CREATE INDEX IF NOT EXISTS idx_city ON users(city);
+
+-- Снова смотрим план
+EXPLAIN QUERY PLAN
+SELECT name, salary FROM users WHERE city = 'London' ORDER BY salary DESC;
+-- Теперь: SEARCH TABLE users USING INDEX idx_city
+
+-- Покрывающий индекс (covering index): содержит все нужные колонки
+CREATE INDEX IF NOT EXISTS idx_city_sal ON users(city, salary DESC);
+
+EXPLAIN QUERY PLAN
+SELECT name, salary FROM users WHERE city = 'London' ORDER BY salary DESC;
+
+-- Составной индекс — порядок важен!
+-- idx(city, salary) работает для: WHERE city=... AND salary>...
+-- НЕ работает для: WHERE salary>... (без city)`}
+ ,{title:'N+1 и антипаттерны',xp:15,type:'code',description:'Частые медленные запросы и как их переписать',code:`-- АНТИПАТТЕРН: коррелированный подзапрос (N+1)
+-- Выполняется для КАЖДОЙ строки!
+SELECT name, salary,
+  (SELECT d.name FROM departments d WHERE d.id = u.dept_id) AS dept_name
+FROM users u;
+
+-- ЛУЧШЕ: один JOIN
+SELECT u.name, u.salary, d.name AS dept_name
+FROM users u JOIN departments d ON u.dept_id = d.id;
+
+-- АНТИПАТТЕРН: SELECT * тянет все данные
+EXPLAIN QUERY PLAN SELECT * FROM users WHERE salary > 100000;
+
+-- ЛУЧШЕ: только нужные колонки
+EXPLAIN QUERY PLAN SELECT name, salary FROM users WHERE salary > 100000;
+
+-- АНТИПАТТЕРН: функция в WHERE блокирует индекс
+-- LOWER(name) = 'alice'  →  придётся сканировать всю таблицу
+
+-- АНТИПАТТЕРН: LIKE с ведущим %
+EXPLAIN QUERY PLAN SELECT name FROM users WHERE city LIKE '%ondon%';
+
+-- ЛУЧШЕ: без ведущего %
+EXPLAIN QUERY PLAN SELECT name FROM users WHERE city = 'London';`}
+ ,{title:'Задача: оптимизация',xp:20,type:'task',description:`1. Перепиши через JOIN: пользователи с тем же dept_id что у user id=5 → Eve|Jack|Olivia\n2. CREATE INDEX idx_sal_city ON users(salary, city) — EXPLAIN SELECT name WHERE salary>100000 AND city='Prague' → idx_sal_city\n3. Топ-3 города по средней зарплате — только ORDER BY + LIMIT, без HAVING → Prague|Amsterdam|Paris\n4. Замени коррелированный подзапрос на JOIN: средняя зарплата отдела для каждого пользователя → Engineering|Marketing|Sales|HR|Analytics`,code:null}
+ ,{title:'Recall: оптимизация',xp:10,type:'recall',description:`За 2 минуты:\n1. Почему LIKE '%text%' не использует индекс?\n2. Что такое N+1 проблема?\n3. Чем покрывающий индекс лучше обычного?\n4. В каком случае составной индекс (a, b) помогает запросу WHERE b=...?`,code:null}
+]}
+
 // PYTHON PRACTICE
 );

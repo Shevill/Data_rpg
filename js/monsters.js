@@ -4,6 +4,7 @@ const MONSTERS = {
   ds:     { emoji: '🔮', name: 'Stats Phantom',    sub: 'Crystal Dungeon  •  Rank A' },
   ml:     { emoji: '🤖', name: 'Neural Golem',     sub: 'Iron Dungeon  •  Rank A'  },
   cv:     { emoji: '👁️', name: 'The Watcher',     sub: 'Abyss Dungeon  •  Rank S' },
+  ab:     { emoji: '🧫', name: 'Null Hypothesis',  sub: 'Stats Dungeon  •  Rank A' },
 };
 
 // xp of completed quest pending animation; consumed when track screen renders

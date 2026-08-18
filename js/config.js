@@ -9,6 +9,30 @@ const TRACKS = [
 
 const QUESTS = [];  // populated by track files
 
+const LEVEL_TITLES = [
+  [1,  'Newbie'],
+  [4,  'Apprentice'],
+  [7,  'Explorer'],
+  [11, 'Analyst'],
+  [15, 'Data Wrangler'],
+  [19, 'Statistician'],
+  [23, 'ML Engineer'],
+  [27, 'Data Scientist'],
+  [31, 'Senior DS'],
+  [36, 'Principal DS'],
+  [41, 'Data Wizard'],
+  [46, 'Data Mage'],
+];
+
+function getLevelTitle(level) {
+  let title = LEVEL_TITLES[0][1];
+  for (const [min, name] of LEVEL_TITLES) {
+    if (level >= min) title = name;
+    else break;
+  }
+  return title;
+}
+
 
 // ============================================================
 // RECALL ANSWERS

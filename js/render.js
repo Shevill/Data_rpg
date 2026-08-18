@@ -42,7 +42,7 @@ function renderMain(){
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
       <div style="font-size:44px;line-height:1">🥷</div>
       <div style="flex:1">
-        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">Data Mage</div>
+        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">${getLevelTitle(State.level)}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <span class="badge badge-purple">${t('levelLabel')} ${State.level}</span>
           <span class="badge badge-amber">🔥 ${State.streak} ${_lang==='en'?'days':'дней'}${multTxt}</span>

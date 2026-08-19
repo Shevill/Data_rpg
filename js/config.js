@@ -168,7 +168,7 @@ async function evaluateTask(questId,stepIdx){
       method:'POST',
       headers:{'Authorization':'Bearer '+getGroqKey(),'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'compound-beta',max_tokens:400,temperature:0.2,
+        model:'groq/compound',max_tokens:400,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
           ?`You are a strict but fair Data Science mentor.
 

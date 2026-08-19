@@ -149,7 +149,7 @@ async function checkTaskItem(questId,stepIdx,itemIdx){
       method:'POST',
       headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'compound-beta',max_tokens:200,temperature:0.2,
+        model:'groq/compound',max_tokens:200,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
           ?`You are a Data Science mentor. Check one specific task item.\n\nItem: ${item.text}\n\nStudent code:\n${code}${result?'\nOutput:\n'+result:''}\n\nReply: 1-2 sentences. Last line only: ACCEPTED or RETRY`
           :`Ты ментор по Data Science. Проверь один конкретный пункт задания.\n\nПункт: ${item.text}\n\nКод студента:\n${code}${result?'\nРезультат:\n'+result:''}\n\nОтвет: 1-2 предложения. Последняя строка — только: ПРИНЯТО или ПОВТОРИТЬ`}]

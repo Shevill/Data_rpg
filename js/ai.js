@@ -149,7 +149,7 @@ async function checkTaskItem(questId,stepIdx,itemIdx){
       method:'POST',
       headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'llama3-70b-8192',max_tokens:200,temperature:0.2,
+        model:'compound-beta',max_tokens:200,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
           ?`You are a Data Science mentor. Check one specific task item.\n\nItem: ${item.text}\n\nStudent code:\n${code}${result?'\nOutput:\n'+result:''}\n\nReply: 1-2 sentences. Last line only: ACCEPTED or RETRY`
           :`Ты ментор по Data Science. Проверь один конкретный пункт задания.\n\nПункт: ${item.text}\n\nКод студента:\n${code}${result?'\nРезультат:\n'+result:''}\n\nОтвет: 1-2 предложения. Последняя строка — только: ПРИНЯТО или ПОВТОРИТЬ`}]
@@ -189,7 +189,7 @@ function taskAIBlock(questId,stepIdx){
     <div style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${t('aiCheck')}</div>
     <textarea id="ata-${questId}-${stepIdx}" class="recall-voice-ta" placeholder="${t('aiPlaceholder')}"></textarea>
     <div style="display:flex;gap:7px;margin-top:6px">
-      <button id="rbtn-${questId}-${stepIdx}" class="btn btn-ghost btn-sm" style="color:#a78bfa;border-color:rgba(139,92,246,0.25)" onclick="toggleRecording('${questId}',${stepIdx})">${t('aiRecord')}</button>
+      <button class="btn btn-ghost btn-sm" style="color:#a78bfa;border-color:rgba(139,92,246,0.25)" onclick="startVoiceToArea('ata-${questId}-${stepIdx}')">${t('voiceBtn')}</button>
       <button class="btn btn-ghost btn-sm btn-full" style="color:#60a5fa;border-color:rgba(59,130,246,0.25)" onclick="evaluateTask('${questId}',${stepIdx})">${t('aiVerify')}</button>
     </div>
     <div id="aeval-${questId}-${stepIdx}" class="ai-out" style="display:none"></div>

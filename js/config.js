@@ -100,6 +100,20 @@ const DATASETS={
 };
 
 let _rec=null,_chunks=[];
+function startVoiceToArea(taId){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert(t('voiceChromeAlert'));return;}
+  const ta=document.getElementById(taId);
+  const rec=new SR();
+  rec.lang=_lang==='en'?'en-US':'ru-RU';rec.continuous=false;rec.interimResults=false;
+  rec.onresult=e=>{
+    const txt=e.results[0][0].transcript;
+    if(ta)ta.value=(ta.value?ta.value+'\n':'')+txt;
+  };
+  rec.onerror=e=>console.warn('SpeechRecognition error:',e.error);
+  rec.start();
+}
+
 async function toggleRecording(questId,stepIdx){
   const btn=document.getElementById(`rbtn-${questId}-${stepIdx}`);
   if(_rec&&_rec.state==='recording'){
@@ -154,7 +168,7 @@ async function evaluateTask(questId,stepIdx){
       method:'POST',
       headers:{'Authorization':'Bearer '+getGroqKey(),'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'llama3-70b-8192',max_tokens:400,temperature:0.2,
+        model:'compound-beta',max_tokens:400,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
           ?`You are a strict but fair Data Science mentor.
 

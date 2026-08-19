@@ -35,7 +35,10 @@ function renderMain(){
 
   return`
 <div style="padding-top:8px">
-  <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:12px;letter-spacing:2px;text-transform:uppercase">🥷 Data RPG</div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
+    <div style="font-size:13px;color:#475569;letter-spacing:2px;text-transform:uppercase">🥷 Data RPG</div>
+    <button onclick="setGroqKeyPrompt()" style="background:${getGroqKey()?'rgba(16,185,129,0.15)':'rgba(239,68,68,0.15)'};border:1px solid ${getGroqKey()?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.3)'};border-radius:8px;color:${getGroqKey()?'#6ee7b7':'#fca5a5'};font-size:11px;padding:3px 8px;cursor:pointer" title="Groq API ключ">🔑 ${getGroqKey()?'Groq ✓':'Groq ?'}</button>
+  </div>
 
   <!-- Hero card -->
   <div class="card card-purple" style="margin-bottom:16px">

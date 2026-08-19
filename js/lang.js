@@ -1,11 +1,10 @@
 // ============================================================
-// GROQ — WHISPER + LLaMA
+// GROQ — WHISPER + LLaMA (транскрипция и AI проверка)
 // ============================================================
-// GROQ_KEY_DEFAULT задаётся в js/keys.js (не в git)
 function getGroqKey(){return localStorage.getItem('mlrpg_groq_key')||(typeof GROQ_KEY_DEFAULT!=='undefined'?GROQ_KEY_DEFAULT:'');}
 function setGroqKeyPrompt(){
   const cur=localStorage.getItem('mlrpg_groq_key')||'';
-  const key=prompt('Groq API ключ (gsk_...):\nПолучить бесплатно на console.groq.com'+(cur?'\n\nТекущий: '+cur.slice(0,8)+'...':''));
+  const key=prompt('Groq API ключ (gsk_...):\nconsole.groq.com'+(cur?'\n\nТекущий: '+cur.slice(0,8)+'...':''));
   if(key&&key.trim().startsWith('gsk_')){localStorage.setItem('mlrpg_groq_key',key.trim());alert('✓ Ключ сохранён!');}
   else if(key!==null){alert('Ключ должен начинаться с gsk_');}
 }

@@ -139,7 +139,7 @@ async function checkTaskItem(questId,stepIdx,itemIdx){
   const key=getGroqKey();
   if(!key){
     out.style.display='block';out.className='ai-out rejected';
-    out.textContent='Нет ключа Groq API.\nУстанови в консоли браузера:\nlocalStorage.setItem(\'mlrpg_groq_key\', \'gsk_...\')';
+    out.innerHTML='Нет ключа Groq API.<br><button onclick="setGroqKeyPrompt()" style="margin-top:8px;padding:5px 14px;background:#3b82f6;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">🔑 Ввести ключ</button>';
     return;
   }
 

@@ -77,10 +77,7 @@ const RECALL_ANSWERS={
 };
 
 const DATASETS={
-  python:[
-    {name:'Iris CSV',url:'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv',desc:'Прямая ссылка CSV · 150 строк · числовые + категория'},
-    {name:'Tips (seaborn)',url:'https://raw.githubusercontent.com/mwaskom/seaborn-data/master/tips.csv',desc:'Чаевые в ресторане · 244 строки · хорош для groupby'},
-  ],
+  python:[],
   ds:[
     {name:'Titanic',url:'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv',desc:'891 строка · числовые + категориальные + пропуски · классика EDA'},
     {name:'Melbourne Housing',url:'https://raw.githubusercontent.com/selva86/datasets/master/housing.csv',desc:'Цены на жильё · числовые признаки · EDA + регрессия'},

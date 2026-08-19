@@ -1,8 +1,8 @@
 // ============================================================
 // GROQ — WHISPER + LLaMA
 // ============================================================
-const GROQ_KEY_DEFAULT='';
-function getGroqKey(){return localStorage.getItem('mlrpg_groq_key')||GROQ_KEY_DEFAULT;}
+// GROQ_KEY_DEFAULT задаётся в js/keys.js (не в git)
+function getGroqKey(){return localStorage.getItem('mlrpg_groq_key')||(typeof GROQ_KEY_DEFAULT!=='undefined'?GROQ_KEY_DEFAULT:'');}
 function setGroqKeyPrompt(){
   const cur=localStorage.getItem('mlrpg_groq_key')||'';
   const key=prompt('Groq API ключ (gsk_...):\nПолучить бесплатно на console.groq.com'+(cur?'\n\nТекущий: '+cur.slice(0,8)+'...':''));

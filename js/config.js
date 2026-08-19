@@ -154,7 +154,7 @@ async function evaluateTask(questId,stepIdx){
       method:'POST',
       headers:{'Authorization':'Bearer '+getGroqKey(),'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',max_tokens:400,temperature:0.2,
+        model:'llama3-70b-8192',max_tokens:400,temperature:0.2,
         messages:[{role:'user',content:_lang==='en'
           ?`You are a strict but fair Data Science mentor.
 
